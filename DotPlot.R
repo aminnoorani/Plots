@@ -50,7 +50,14 @@ mat <- markers %>%
 row.names(mat) <- mat$name  # put gene in `row`
 mat <- mat[,-1] #drop gene column as now in rows
 clust <- hclust(dist(mat %>% as.matrix())) # hclust with distance matrix
-
+#If get this error: 
+#Error in dist(mat %>% as.matrix()) : 
+ # 'list' object cannot be coerced to type 'double'
+#you need to check whether there are any duplications in the data with the code below:
+#markers %>%
+#  dplyr::group_by(name, variable) %>%
+#  dplyr::summarise(n = dplyr::n(), .groups = "drop") %>%
+#  dplyr::filter(n > 1L) 
 
 
 ddgram <- as.dendrogram(clust) # create dendrogram
