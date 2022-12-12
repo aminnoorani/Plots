@@ -28,9 +28,16 @@ header <- c("Cell_Types","Tissue_Types", "value")
 colnames(data_frame) <- header
 
 
-x <- data_frame[data_frame==0] <- NA
+data_frame[data_frame==0] <- NA
 data2<-data_frame[complete.cases(data_frame),]
+#If error discrete shows up
+data2$prcntlabel <- as.numeric(unlist(data2$prcntlabel))
 
+data2$Cell_Types <- factor(data2$Cell_Types,levels = c("C41","C40","C39","C38","C37","C36","C35","C34","C33","C32",
+                                                       "C31","C30","C29","C28","C27","C26","C25","C24",
+                                                       "C23","C22","C21","C20","C19","C18","C17","C16",
+                                                       "C15","C14","C13","C12","C11","C10","C9","C8",
+                                                       "C7","C6","C5","C4","C3","C2","C1"))
 
 mx = ggplot(data2, aes(x = Cell_Types, fill = Tissue_Types, y = value)) + 
   geom_bar(position = "fill",stat = "identity", colour = "black") +
@@ -43,7 +50,9 @@ mx = ggplot(data2, aes(x = Cell_Types, fill = Tissue_Types, y = value)) +
   scale_fill_manual(values = colours, limits = samples)  + coord_flip()
 
 mx + geom_text(aes(label=paste0(value)),
-               position=position_fill(vjust=0.5), colour="black", size =2) + theme_minimal()
+               position=position_fill(vjust=0.5), colour="black", size =2) 
+  scale_y_continuous(labels = scales::percent_format()) + 
+  theme_minimal()
 
 #or with different method
 r_color <- sample(colors())
