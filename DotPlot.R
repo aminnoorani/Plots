@@ -3,6 +3,8 @@ library(cowplot)
 library(ggdendro)
 library(patchwork) 
 library(ggtree)
+library(aplot)
+library(RColorBrewer)
 
 
 markers <- read.csv("~/Downloads/Markers_Top20.csv")
@@ -108,13 +110,15 @@ dotplot <- markers %>% filter(name %in% markers2) %>%
 #################################################
 ggtree_plot_col <- ggtree_plot_col + xlim2(dotplot)
 ggtree_plot <- ggtree_plot + ylim2(dotplot)
+colourCount = length(unique(markers$variable))
+getPalette = colorRampPalette(brewer.pal(9, "Set1"))
 
 labels <- ggplot(markers %>% 
                    mutate(`Clusters` = variable,
                           cluster = factor(variable, levels = v_clust$labels[v_clust$order])), 
                  aes(x = variable, y = 1, fill = `Clusters`)) + 
   geom_tile() + 
-  scale_fill_brewer(palette = 'Set1') + 
+  scale_fill_manual(values = getPalette(colourCount)) + 
   theme_nothing() +
   xlim2(dotplot)
 
