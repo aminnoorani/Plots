@@ -1,2 +1,2 @@
 # Plots
-Nice Plots for Genomic Analysis Visualization, all written in R
+Nice Plots for visualization of genomic data
