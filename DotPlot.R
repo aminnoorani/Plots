@@ -5,9 +5,13 @@ library(patchwork)
 library(ggtree)
 library(aplot)
 library(RColorBrewer)
+library(reshape2)
 
-
+#Load data-
 markers <- read.csv("~/Downloads/Markers_Top20.csv")
+#remove duplicated rows
+markers <- markers %>% distinct(name, .keep_all = TRUE)
+#Covert wide data to Long data
 markers <- melt(markers)
 
 
