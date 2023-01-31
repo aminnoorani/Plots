@@ -4,16 +4,20 @@ library(reshape)
 
 
 
+samples <- c("Brain","Colon","Heart","Kidney","Liver","Lung","Pancreas","Small_Intestine","Spleen")
+colours <- c("#D51F26","#272E6A","#208A42","#89288F","#F47D2B", "#FEE500","#8A9FD1","#C06CAB","#F9B712")
+
+#Dendrogram
+df <- read.csv("~/Cell_Type_Table2.csv", header = TRUE)
+rownames(df) <- df$X
+df$X <- NULL
+dd <- dist(scale(df), method = "euclidean")
+hc <- hclust(dd, method = "ward.D2")
+ggtree_plot <- ggtree::ggtree(hc)
+
 df <- read.csv("~/Cell_Type_Table2.csv", header = TRUE)
 pcm = melt(df, id = c("X"))
-
-samples <- c("Brain","Colon","Heart","Kidney","Liver","Lung","Pancreas","Small_Intestine","Spleen")
-
-colours <- c("#D51F26","#502A59", "#3D6E57","#8D2B8B", "#DE6C3E","yellow","#8E9ACD","deeppink3","#F9B712")
-
-
 pcm$X <- factor(pcm$X,levels=unique(pcm$X))
-
 #if we want to show with Percentage
 data_frame = ddply(pcm, .(X), transform,
                    percentage=value/sum(value) * 100)
@@ -33,7 +37,8 @@ data2<-data_frame[complete.cases(data_frame),]
 #If error discrete shows up
 data2$prcntlabel <- as.numeric(unlist(data2$prcntlabel))
 
-data2$Cell_Types <- factor(data2$Cell_Types,levels = c("C41","C40","C39","C38","C37","C36","C35","C34","C33","C32",
+#In case there are cluster numbers
+#data2$Cell_Types <- factor(data2$Cell_Types,levels = c("C41","C40","C39","C38","C37","C36","C35","C34","C33","C32",
                                                        "C31","C30","C29","C28","C27","C26","C25","C24",
                                                        "C23","C22","C21","C20","C19","C18","C17","C16",
                                                        "C15","C14","C13","C12","C11","C10","C9","C8",
@@ -49,10 +54,11 @@ mx = ggplot(data2, aes(x = Cell_Types, fill = Tissue_Types, y = value)) +
   labs(x = "Cell Types", y = "Number of Cells", fill = "Tissues") + 
   scale_fill_manual(values = colours, limits = samples)  + coord_flip()
 
-mx + geom_text(aes(label=paste0(value)),
-               position=position_fill(vjust=0.5), colour="black", size =2) 
-  scale_y_continuous(labels = scales::percent_format()) + 
-  theme_minimal()
+MXX <- mx + geom_text(aes(label=paste0(value)), position=position_fill(vjust=0.5), colour="black", size =2) + scale_y_continuous(labels = scales::percent_format()) + theme_minimal()
+plot_grid(ggtree_plot, MXX, nrow = 1, rel_widths = c(0.6,2), align = 'h')
+
+
+
 
 #or with different method
 r_color <- sample(colors())
