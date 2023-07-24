@@ -1,2 +1,2 @@
 # Plots
-Nice Plots for visualization of genomic data
+Plots for genomic data visualization
